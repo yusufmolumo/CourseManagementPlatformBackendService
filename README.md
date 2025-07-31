@@ -120,4 +120,4 @@ A multi-feature backend system for academic institutions to support faculty oper
 
 ## Authors & License
 - Developed by Yusuf Molumo.
-- License: ISC 
+- This project is licensed under the MIT License
