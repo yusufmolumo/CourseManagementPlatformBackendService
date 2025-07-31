@@ -118,13 +118,6 @@ A multi-feature backend system for academic institutions to support faculty oper
 
 ---
 
-## Assumptions & Limitations
-- Email notifications are simulated via console logs (can be extended to real email/SMS).
-- No file upload implemented (can be added if required).
-- For production, set `sequelize.sync({ alter: false })` and use migrations.
-
----
-
 ## Authors & License
-- Developed by [Your Name].
+- Developed by Yusuf Molumo.
 - License: ISC 
