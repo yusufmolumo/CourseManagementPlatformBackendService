@@ -25,10 +25,10 @@ A multi-feature backend system for academic institutions to support faculty oper
    npm install
    ```
 3. **Configure environment variables**
-   - Copy `.env.example` to `.env` and fill in your MySQL/Redis details (see `.env` in project root).
+   - Fill in your MySQL/Redis details in a `.env` in project root.
 4. **Set up MySQL and Redis**
    - MySQL: Create a database and user as described above.
-   - Redis: Install and run locally (or use Memurai on Windows).
+   - Redis: Install and run locally.
 5. **Seed the database**
    ```bash
    node src/seed.js
@@ -73,8 +73,8 @@ A multi-feature backend system for academic institutions to support faculty oper
   ```json
   POST /api/auth/register
   {
-    "name": "Alice Manager",
-    "email": "alice.manager@example.com",
+    "name": "Test Manager",
+    "email": "test.manager@example.com",
     "password": "password123",
     "role": "manager"
   }
@@ -83,7 +83,7 @@ A multi-feature backend system for academic institutions to support faculty oper
   ```json
   POST /api/auth/login
   {
-    "email": "alice.manager@example.com",
+    "email": "test.manager@example.com",
     "password": "password123"
   }
   ```
@@ -96,7 +96,7 @@ A multi-feature backend system for academic institutions to support faculty oper
     "ClassId": 1,
     "ModeId": 1,
     "facilitatorId": 2,
-    "intakePeriod": "HT1",
+    "intakePeriod": "JT1",
     "trimester": "2024S"
   }
   ```
@@ -113,15 +113,8 @@ A multi-feature backend system for academic institutions to support faculty oper
 ---
 
 ## Student Reflection Page (Module 3)
-- See the `reflection-page/` folder.
-- Open `index.html` in your browser or host on GitHub Pages.
-- Supports English and French with a language switcher.
-
----
-
-## Deployment
-- Host the backend on any Node.js-compatible server.
-- Host the reflection page on GitHub Pages (see instructions above).
+- **Live Demo**: [https://studentreflectionpage.netlify.app/](https://studentreflectionpage.netlify.app/)
+- Hosted on Netlify 
 
 ---
 
