@@ -6,7 +6,7 @@ const { authenticate, authorize } = require('../middlewares/auth');
 // Facilitators can create/update/delete their own logs
 router.post('/', authenticate, authorize('facilitator'), controller.create);
 router.put('/:id', authenticate, authorize('facilitator', 'manager'), controller.update);
-router.delete('/:id', authenticate, authorize('facilitator', 'manager'), controller.remove);
+router.delete('/:id', authenticate, authorize('facilitator', 'manager'), controller.delete);
 
 // All authenticated users can view, but facilitators only see their own
 router.get('/', authenticate, controller.getAll);

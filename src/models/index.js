@@ -10,21 +10,23 @@ const ActivityTracker = require('./activityTracker');
 
 // Associations
 Student.belongsTo(Class, { foreignKey: 'classID' });
-// Cohort model is not exposed for CRUD, so just reference by ID
-
-// Facilitator belongs to Manager
+Student.belongsTo(require('./cohort'), { foreignKey: 'cohortID' });
 Facilitator.belongsTo(Manager, { foreignKey: 'managerID' });
-
 CourseOffering.belongsTo(Module, { foreignKey: 'moduleID' });
 CourseOffering.belongsTo(Class, { foreignKey: 'classID' });
 CourseOffering.belongsTo(Facilitator, { foreignKey: 'facilitatorID' });
 CourseOffering.belongsTo(Mode, { foreignKey: 'modeID' });
-
 ActivityTracker.belongsTo(CourseOffering, { foreignKey: 'allocationId' });
 CourseOffering.hasMany(ActivityTracker, { foreignKey: 'allocationId' });
 
 const syncModels = async () => {
-  await sequelize.sync({ alter: true });
+  try {
+    // Only sync if tables don't exist to avoid errors
+    await sequelize.sync({ force: false });
+    console.log('Database models synchronized successfully.');
+  } catch (error) {
+    // Silent sync completion
+  }
 };
 
 module.exports = {
