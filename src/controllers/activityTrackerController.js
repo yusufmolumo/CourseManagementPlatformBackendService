@@ -1,20 +1,44 @@
 const service = require('../services/activityTrackerService');
-const { User } = require('../models');
+const { Facilitator, Manager, Module, CourseOffering } = require('../models');
 const { sendNotification } = require('../services/notificationService');
 
 exports.create = async (req, res) => {
   try {
     const data = { ...req.body, facilitatorId: req.user.id };
     const activity = await service.createActivity(data);
-    // Notify all managers
-    const managers = await User.findAll({ where: { role: 'manager' } });
-    for (const manager of managers) {
+    
+    // Get facilitator details
+    const facilitator = await Facilitator.findByPk(req.user.id);
+    if (!facilitator) {
+      throw new Error('Facilitator not found');
+    }
+
+    // Get manager details
+    const manager = await Manager.findByPk(facilitator.managerID);
+    if (!manager) {
+      throw new Error('Manager not found');
+    }
+
+    // Get course offering and module details
+    const courseOffering = await CourseOffering.findByPk(data.allocationId, {
+      include: [{ model: Module, as: 'Module' }]
+    });
+
+    if (courseOffering && courseOffering.Module) {
+      // Send submission alert to manager
       await sendNotification({
-        type: 'activity_log_submitted',
-        recipient: manager.email,
-        message: `Facilitator ${req.user.name} submitted a log for week ${activity.week}.`,
+        type: 'submission_alert',
+        recipient: manager.email || 'manager@example.com',
+        message: `Facilitator ${facilitator.name} submitted a log for week ${data.week || 'current'}.`,
+        data: {
+          managerName: manager.name,
+          facilitatorName: facilitator.name,
+          week: data.week || 'current',
+          courseName: courseOffering.Module.name
+        }
       });
     }
+
     res.status(201).json(activity);
   } catch (err) {
     res.status(400).json({ message: err.message });

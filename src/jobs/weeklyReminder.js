@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const { CourseOffering, ActivityTracker, User } = require('../models');
+const { CourseOffering, ActivityTracker, Facilitator, Module, Manager } = require('../models');
 const { sendNotification } = require('../services/notificationService');
 
 function getCurrentWeek() {
@@ -12,18 +12,64 @@ function getCurrentWeek() {
 
 async function checkAndRemind() {
   const week = getCurrentWeek();
-  const offerings = await CourseOffering.findAll({ include: [{ model: User, as: 'Facilitator' }] });
-  for (const offering of offerings) {
-    const facilitator = offering.Facilitator;
-    if (!facilitator) continue;
-    const log = await ActivityTracker.findOne({ where: { CourseOfferingId: offering.id, facilitatorId: facilitator.id, week } });
-    if (!log) {
-      await sendNotification({
-        type: 'reminder',
-        recipient: facilitator.email,
-        message: `Reminder: Please submit your activity log for week ${week} for course ${offering.ModuleId}.`,
+  
+  try {
+    // Get all course offerings with facilitator and module details
+    const offerings = await CourseOffering.findAll({
+      include: [
+        { model: Facilitator, as: 'Facilitator' },
+        { model: Module, as: 'Module' }
+      ]
+    });
+
+    for (const offering of offerings) {
+      const facilitator = offering.Facilitator;
+      const module = offering.Module;
+      
+      if (!facilitator || !module) continue;
+
+      // Check if log exists for this week
+      const log = await ActivityTracker.findOne({
+        where: { 
+          allocationId: offering.id,
+          week: week 
+        }
       });
+
+      if (!log) {
+        // Send reminder to facilitator
+        await sendNotification({
+          type: 'reminder',
+          recipient: facilitator.email,
+          message: `Reminder: Please submit your activity log for week ${week} for course ${module.name}.`,
+          data: {
+            facilitatorName: facilitator.name,
+            week: week,
+            courseName: module.name
+          }
+        });
+
+        // Also send overdue alert to manager
+        const manager = await Manager.findByPk(facilitator.managerID);
+        if (manager) {
+          await sendNotification({
+            type: 'overdue_alert',
+            recipient: manager.email || 'manager@example.com', // Fallback email
+            message: `Alert: ${facilitator.name} has not submitted activity log for week ${week} for course ${module.name}.`,
+            data: {
+              managerName: manager.name,
+              facilitatorName: facilitator.name,
+              week: week,
+              courseName: module.name
+            }
+          });
+        }
+      }
     }
+    
+    console.log(`Weekly reminder check completed for week ${week}`);
+  } catch (error) {
+    console.error('Error in weekly reminder check:', error);
   }
 }
 

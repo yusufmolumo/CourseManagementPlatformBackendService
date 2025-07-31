@@ -1,13 +1,13 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Mode = sequelize.define('Mode', {
+const Manager = sequelize.define('Manager', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
   name: { type: DataTypes.STRING, allowNull: false },
-}, { tableName: 'modes' });
+}, { tableName: 'managers' });
 
-module.exports = Mode; 
+module.exports = Manager;

@@ -6,6 +6,13 @@ const { syncModels } = require('./models');
 const authRoutes = require('./routes/auth');
 const courseOfferingRoutes = require('./routes/courseOffering');
 const activityTrackerRoutes = require('./routes/activityTracker');
+const moduleRoutes = require('./routes/module');
+const classRoutes = require('./routes/class');
+const studentRoutes = require('./routes/student');
+const facilitatorRoutes = require('./routes/facilitator');
+const allocationRoutes = require('./routes/allocation');
+const managerRoutes = require('./routes/manager');
+const testEmailRoutes = require('./routes/testEmail');
 const setupSwagger = require('../swagger/swagger');
 
 const app = express();
@@ -37,6 +44,13 @@ syncModels();
 app.use('/api/auth', authRoutes);
 app.use('/api/course-offerings', courseOfferingRoutes);
 app.use('/api/activity-logs', activityTrackerRoutes);
+app.use('/api/modules', moduleRoutes);
+app.use('/api/classes', classRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/facilitators', facilitatorRoutes);
+app.use('/api/allocations', allocationRoutes);
+app.use('/api/managers', managerRoutes);
+app.use('/api/test', testEmailRoutes);
 setupSwagger(app);
 
 module.exports = app; 
